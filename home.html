@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Team Home</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1><span class="support">Support</span> Team</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-welcome">
+                    <span>Welcome User</span>
+                    <a th:href="@{/logout}" class="logout">Logout</a>
+                </div>
+            </div>
+        </header>
+        <aside>
+            <ul>
+                <li><a th:href="@{/home}">Home</a></li>
+                <li><a th:href="@{/kill-query}">Kill Query</a></li>
+                <li><a th:href="@{/log-aggregator}">Log Aggregator</a></li>
+            </ul>
+        </aside>
+        <main>
+            <h2>Application Name</h2>
+            <!-- Main content goes here -->
+        </main>
+        <footer>
+            <p>Powered By @TradeEdge Support</p>
+        </footer>
+    </div>
+</body>
+</html>
