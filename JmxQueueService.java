@@ -125,4 +125,87 @@ public class JmxQueueService {
             return new ArrayList<>();
         }
     }
+
+      public int getTotalQueueCount() {
+        try {
+            MBeanServerConnection connection = getConnection();
+            ObjectName query = new ObjectName("org.apache.activemq:type=Broker,brokerName=" + BROKER_NAME + ",destinationType=Queue,*");
+            Set<ObjectName> queueSet = connection.queryNames(query, null);
+            return queueSet.size();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int getTotalTopicCount() {
+        try {
+            MBeanServerConnection connection = getConnection();
+            ObjectName query = new ObjectName("org.apache.activemq:type=Broker,brokerName=" + BROKER_NAME + ",destinationType=Topic,*");
+            Set<ObjectName> topicSet = connection.queryNames(query, null);
+            return topicSet.size();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int getTotalConnectionCount() {
+        try {
+            MBeanServerConnection connection = getConnection();
+            ObjectName query = new ObjectName("org.apache.activemq:type=Broker,brokerName=" + BROKER_NAME + ",connector=clientConnectors,connectorName=*,connectionViewType=clientId,*");
+            Set<ObjectName> connectionSet = connection.queryNames(query, null);
+            return connectionSet.size();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int getTotalSubscriberCount() {
+        try {
+            MBeanServerConnection connection = getConnection();
+            ObjectName query = new ObjectName("org.apache.activemq:type=Broker,brokerName=" + BROKER_NAME + ",destinationType=Topic,*");
+            Set<ObjectName> topicSet = connection.queryNames(query, null);
+            int subscriberCount = 0;
+
+            for (ObjectName topicObjectName : topicSet) {
+                subscriberCount += (Integer) connection.getAttribute(topicObjectName, "ConsumerCount");
+            }
+
+            return subscriberCount;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public List<QueueDetails> getAllQueueDetails() {
+        try {
+            MBeanServerConnection connection = getConnection();
+            ObjectName query = new ObjectName("org.apache.activemq:type=Broker,brokerName=" + BROKER_NAME + ",destinationType=Queue,*");
+            Set<ObjectName> queueSet = connection.queryNames(query, null);
+
+            List<QueueDetails> queueDetailsList = new ArrayList<>();
+            for (ObjectName queueObjectName : queueSet) {
+                QueueDetails details = new QueueDetails();
+                details.setQueueName(queueObjectName.getKeyProperty("destinationName"));
+                details.setTotalPendingMessages((Long) connection.getAttribute(queueObjectName, "QueueSize"));
+                details.setNumberOfConsumers((Integer) connection.getAttribute(queueObjectName, "ConsumerCount"));
+                details.setMessagesEnqueued((Long) connection.getAttribute(queueObjectName, "EnqueueCount"));
+                details.setMessagesDequeued((Long) connection.getAttribute(queueObjectName, "DequeueCount"));
+                queueDetailsList.add(details);
+            }
+
+            return queueDetailsList;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }
